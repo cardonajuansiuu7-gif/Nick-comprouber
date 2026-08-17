@@ -1,0 +1,32 @@
+name: Comprobar nicks
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Instalar dependencias
+        run: pip install requests
+
+      - name: Comprobar nicks
+        run: python comprobador_nicks_minecraft.py
+
+      - name: Guardar resultados en el repo
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add disponibles.txt revisados.txt
+          git commit -m "Resultados comprobacion nicks" || echo "Sin cambios que subir"
+          git push
